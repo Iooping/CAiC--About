@@ -1,0 +1,723 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About Us | Cordova ai Creatives</title>
+    <!-- Use Tailwind CSS for modern, utility-first styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Import the new fonts */
+        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&family=Inter:wght@400;600;700&display=swap');
+
+        /* Custom Glassmorphism styles for a sleek, modern look */
+        .glass-container {
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 1.5rem; /* 24px */
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 2rem;
+        }
+
+        /* Custom animations for section reveals on scroll */
+        .animated-section {
+            opacity: 0;
+            transform: translateY(40px);
+            transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+        }
+
+        .animated-section.is-visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Dynamic gradient background for body with animation using the new colors */
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #801A1A, #C0392B, #F39C12);
+            background-size: 500% 500%;
+            animation: gradient-animation 8s linear infinite;
+            color: #FDEBD0; /* Light cream for text */
+            min-height: 100vh;
+        }
+
+        /* Position the canvas to cover the whole background, behind everything else */
+        #sparkle-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            pointer-events: none; /* Allows clicks to pass through to the elements below */
+        }
+
+        @keyframes gradient-animation {
+            0% {
+                background-position: 0% 50%;
+            }
+            50% {
+                background-position: 100% 50%;
+            }
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+
+        /* Custom fonts and colors for headings with added text-shadow for contrast */
+        h1, h2, h3 {
+            font-family: 'Montserrat', sans-serif;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.7);
+        }
+        
+        /* The main Cordova AI Creatives title text is pure white for a stronger contrast and impact */
+        .main-title {
+            color: #FFFFFF;
+        }
+        
+        /* Add a subtle glow to the main title and specific headings to match the fireflies effect */
+        .main-title, .glow-heading {
+            color: #FFFFFF; /* Set the base color to white */
+            text-shadow: 0 0 10px #F39C12, 0 0 20px #F39C12; /* Keep the golden glow */
+        }
+        
+        /* The h3 headings get a different color to differentiate them from the glowing headings */
+        h3 {
+            color: #F39C12;
+        }
+
+
+        /* Accordion transition for a smooth open/close effect */
+        .accordion-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s ease-in-out;
+        }
+        .accordion-item.open .accordion-content {
+            max-height: 500px; /* Adjust as needed, makes content visible */
+        }
+        
+        /* Testimonial slider styles */
+        .testimonial-slider {
+            overflow: hidden;
+        }
+        .testimonial-track {
+            display: flex;
+            transition: transform 0.5s ease-in-out;
+        }
+        .testimonial-card {
+            flex: 0 0 100%;
+            width: 100%;
+        }
+
+        /* Custom button styling for call-to-action */
+        .cta-btn {
+            background-color: #F39C12; /* Golden yellow for CTA button */
+            color: #801A1A; /* Deep maroon text for contrast */
+            transition: all 0.3s ease;
+        }
+        .cta-btn:hover {
+            box-shadow: 0 0 15px 5px rgba(243, 156, 18, 0.6); /* Golden yellow hover effect */
+            transform: translateY(-2px);
+        }
+
+        /* Custom background modal styles */
+        #bg-modal {
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+        }
+
+        /* Ensure timeline dots are positioned correctly */
+        .timeline-node {
+            position: relative;
+            width: 20px;
+            height: 20px;
+            background-color: #F39C12; /* Golden yellow */
+            border-radius: 50%;
+            border: 3px solid #801A1A; /* Deep maroon */
+        }
+        .timeline-node::before {
+            content: attr(data-year);
+            position: absolute;
+            top: -35px;
+            left: 50%;
+            transform: translateX(-50%);
+            white-space: nowrap;
+            font-weight: bold;
+            color: #F39C12;
+        }
+        .timeline-node::after {
+            content: attr(data-text);
+            position: absolute;
+            top: 25px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 150px;
+            text-align: center;
+            font-size: 0.875rem;
+            color: #FDEBD0;
+        }
+    </style>
+</head>
+<body class="p-4 md:p-8 relative">
+
+    <!-- Canvas for the sparkling background effect -->
+    <canvas id="sparkle-canvas"></canvas>
+
+    <!-- Background Customization Modal -->
+    <div id="bg-modal" class="fixed inset-0 z-50 hidden flex items-center justify-center">
+        <div class="glass-container p-6 w-11/12 md:w-2/3 lg:w-1/2">
+            <h3 class="text-3xl mb-4 text-center">Customize Your Background</h3>
+            
+            <div id="drop-area" class="border-4 border-dashed border-gray-400 p-8 text-center rounded-lg cursor-pointer transition-colors duration-300 hover:border-F39C12">
+                <p>Drag & Drop an image here, or</p>
+                <input type="file" id="bg-upload" class="hidden" accept="image/*">
+                <label for="bg-upload" class="cta-btn inline-block mt-4 px-6 py-2 rounded-full">
+                    Choose a File
+                </label>
+            </div>
+
+            <div class="my-6 text-center">
+                <p class="text-FDEBD0">— OR —</p>
+            </div>
+
+            <div class="flex flex-col gap-2">
+                <label for="bg-url" class="text-FDEBD0">Paste an image link:</label>
+                <input type="url" id="bg-url" placeholder="e.g. https://example.com/image.jpg" class="w-full p-3 rounded-lg bg-white/10 text-FDEBD0 border border-white/20 focus:outline-none focus:ring-2 focus:ring-[#F39C12]">
+            </div>
+
+            <div id="bg-preview-container" class="mt-4 hidden relative overflow-hidden rounded-lg" style="height: 250px;">
+                <img id="bg-preview" class="w-full h-full object-cover">
+            </div>
+            
+            <div class="flex justify-end mt-6">
+                <!-- New button to remove the custom background -->
+                <button id="remove-bg" class="bg-red-500 text-white px-6 py-2 rounded-full mr-2 hover:bg-red-600 transition">Remove Background</button>
+                <button id="close-modal" class="bg-gray-700 text-white px-6 py-2 rounded-full mr-2 hover:bg-gray-600">Cancel</button>
+                <button id="apply-bg" class="cta-btn px-6 py-2 rounded-full">Apply</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content Container with Glassmorphism Effect -->
+    <div class="glass-container max-w-7xl mx-auto my-12 md:my-20 p-6 md:p-12 lg:p-16">
+
+        <!-- Header Section -->
+        <header class="text-center mb-16 animated-section">
+            <!-- Updated to make CAiC the main title and Cordova ai Creatives the subtitle -->
+            <h1 class="text-5xl md:text-6xl font-extrabold main-title mb-2">CaiC</h1>
+            <h2 class="text-2xl md:text-3xl font-bold tracking-tight text-[#F39C12]">Cordova ai Creatives</h2>
+            <p class="text-lg md:text-xl mt-2 text-FDEBD0">Where Filipino Ingenuity Meets Artificial Intelligence.</p>
+        </header>
+
+        <!-- Mission & Vision Section -->
+        <section id="mission" class="my-20 animated-section">
+            <div class="text-center">
+                <h2 class="text-3xl md:text-4xl mb-4 glow-heading">Our Vision & Mission</h2>
+                <p class="text-lg mb-6 max-w-3xl mx-auto text-FDEBD0">
+                    To empower Filipino brands and student groups by delivering culturally relevant, AI-powered design and storytelling. We envision a future where local creativity thrives on a global stage, propelled by brilliant technology.
+                </p>
+            </div>
+        </section>
+
+        <!-- The Journey (Timeline) Section -->
+        <section id="story" class="my-20 animated-section">
+            <h2 class="text-3xl md:text-4xl mb-8 text-center glow-heading">The Journey of Joshua Cordova</h2>
+            <div class="relative max-w-5xl mx-auto">
+                <div class="flex justify-between items-center relative z-10">
+                    <div class="timeline-node" data-year="2019" data-text="From winning poster contests..."></div>
+                    <div class="timeline-node" data-year="2021" data-text="...to launching Aristoshots, a local multimedia studio."></div>
+                    <div class="timeline-node" data-year="Present" data-text="Founding CaiC, merging creativity with AI."></div>
+                </div>
+                <div class="absolute top-1/2 left-0 w-full h-1 bg-[#801A1A] -translate-y-1/2"></div>
+            </div>
+        </section>
+
+        <!-- Differentiators (Accordion) Section -->
+        <section id="difference" class="my-20 animated-section">
+            <h2 class="text-3xl md:text-4xl mb-8 text-center glow-heading">What Makes Us Different</h2>
+            <div class="space-y-4 max-w-4xl mx-auto">
+                <!-- Accordion Item 1 -->
+                <div class="accordion-item glass-container p-6 cursor-pointer">
+                    <div class="accordion-header flex items-center justify-between">
+                        <h3 class="text-xl mb-0">AI-Powered Branding</h3>
+                        <svg class="w-6 h-6 transform transition-transform duration-300" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clip-rule="evenodd" />
+                        </svg>
+                    </div>
+                    <div class="accordion-content pt-4">
+                        <p class="text-FDEBD0">We leverage AI to analyze market trends and audience data, ensuring that your brand's visual identity is not only beautiful but also strategically sound and highly effective.</p>
+                    </div>
+                </div>
+                <!-- Accordion Item 2 -->
+                <div class="accordion-item glass-container p-6 cursor-pointer">
+                    <div class="accordion-header flex items-center justify-between">
+                        <h3 class="text-xl mb-0">Modular Content Packs</h3>
+                        <svg class="w-6 h-6 transform transition-transform duration-300" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clip-rule="evenodd" />
+                        </svg>
+                    </div>
+                    <div class="accordion-content pt-4">
+                        <p class="text-FDEBD0">Receive a flexible library of brand assets that can be easily adapted for any platform, ensuring consistency and saving you time. Our designs are built to evolve with your needs.</p>
+                    </div>
+                </div>
+                <!-- Accordion Item 3 -->
+                <div class="accordion-item glass-container p-6 cursor-pointer">
+                    <div class="accordion-header flex items-center justify-between">
+                        <h3 class="text-xl mb-0">Cultural Relevance</h3>
+                        <svg class="w-6 h-6 transform transition-transform duration-300" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clip-rule="evenodd" />
+                        </svg>
+                    </div>
+                    <div class="accordion-content pt-4">
+                        <p class="text-FDEBD0">Our AI models are specially fine-tuned with Filipino art, symbols, and design principles. The result is a unique, authentic aesthetic that speaks directly to the local market.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Services Section -->
+        <section id="services" class="my-20 animated-section">
+            <h2 class="text-3xl md:text-4xl mb-8 text-center glow-heading">Services Snapshot</h2>
+            <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div class="glass-container p-6 text-center hover:scale-105 transition-transform duration-300">
+                    <h3 class="text-xl mb-2">Branding Kits</h3>
+                    <p class="text-sm text-FDEBD0">Logos, color palettes, and guidelines, generated and refined with AI.</p>
+                </div>
+                <div class="glass-container p-6 text-center hover:scale-105 transition-transform duration-300">
+                    <h3 class="text-xl mb-2">Web Design</h3>
+                    <p class="text-sm text-FDEBD0">Responsive websites with AI-driven UX/UI for optimal user experience.</p>
+                </div>
+                <div class="glass-container p-6 text-center hover:scale-105 transition-transform duration-300">
+                    <h3 class="text-xl mb-2">Social Media Automation</h3>
+                    <p class="text-sm text-FDEBD0">Automated content generation and scheduling to keep your brand active.</p>
+                </div>
+                <div class="glass-container p-6 text-center hover:scale-105 transition-transform duration-300">
+                    <h3 class="text-xl mb-2">AI Agent Setup</h3>
+                    <p class="text-sm text-FDEBD0">Custom chatbots and virtual assistants tailored for your business needs.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Credibility & Social Proof Section -->
+        <section id="credibility" class="my-20 animated-section">
+            <h2 class="text-3xl md:text-4xl mb-8 text-center glow-heading">Credibility & Social Proof</h2>
+            <div class="flex flex-col md:flex-row gap-8">
+                <div class="md:w-1/2">
+                    <h3 class="text-2xl mb-4">Awards & Engagements</h3>
+                    <ul class="list-disc list-inside space-y-2 text-FDEBD0">
+                        <li>Google BI & Cybersecurity Certifications</li>
+                        <li>Avid Attendee of Google DevFest Bacolod</li>
+                        <li>Avid Attendee of GDG Bacolod Workshops</li>
+                    </ul>
+                </div>
+                <div class="md:w-1/2">
+                    <h3 class="text-2xl mb-4">Client Testimonials</h3>
+                    <div class="testimonial-slider relative p-4 glass-container">
+                        <div class="testimonial-track">
+                            <!-- Testimonial Cards -->
+                            <div class="testimonial-card text-center flex-shrink-0">
+                                <p class="italic text-FDEBD0">"CaiC took our brand identity to the next level. The AI-driven insights were a game-changer for our marketing strategy."</p>
+                                <p class="mt-4 font-bold text-[#F39C12]">- Jane Doe, CEO of Local Eats PH</p>
+                            </div>
+                            <div class="testimonial-card text-center flex-shrink-0">
+                                <p class="italic text-FDEBD0">"The web design was stunning and intuitive. We saw an immediate boost in engagement and conversions."</p>
+                                <p class="mt-4 font-bold text-[#F39C12]">- John Smith, Founder of EduConnect</p>
+                            </div>
+                            <div class="testimonial-card text-center flex-shrink-0">
+                                <p class="italic text-FDEBD0">"Working with Joshua was a breeze. He combined technical expertise with a creative flair that is unmatched."</p>
+                                <p class="mt-4 font-bold text-[#F39C12]">- Maria Gomez, Marketing Head at TechSpark</p>
+                            </div>
+                        </div>
+                        <div class="flex justify-center mt-4">
+                            <button class="slider-btn prev-btn bg-white/10 p-2 rounded-full mr-2 hover:bg-white/20 transition">‹</button>
+                            <button class="slider-btn next-btn bg-white/10 p-2 rounded-full hover:bg-white/20 transition">›</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Our Values Section -->
+        <section id="values" class="my-20 animated-section">
+            <h2 class="text-3xl md:text-4xl mb-8 text-center glow-heading">Our Values & Approach</h2>
+            <div class="grid md:grid-cols-2 gap-6">
+                <div class="glass-container p-6 text-center hover:scale-105 transition-transform duration-300">
+                    <h3 class="text-xl mb-2">Clarity</h3>
+                    <p class="text-sm text-FDEBD0">We believe in clear communication and transparent processes to build trust.</p>
+                </div>
+                <div class="glass-container p-6 text-center hover:scale-105 transition-transform duration-300">
+                    <h3 class="text-xl mb-2">Collaboration</h3>
+                    <p class="text-sm text-FDEBD0">We work with you, not just for you. Your vision is our blueprint.</p>
+                </div>
+                <div class="glass-container p-6 text-center hover:scale-105 transition-transform duration-300">
+                    <h3 class="text-xl mb-2">Modularity</h3>
+                    <p class="text-sm text-FDEBD0">Our solutions are designed to be flexible and scalable for future growth.</p>
+                </div>
+                <div class="glass-container p-6 text-center hover:scale-105 transition-transform duration-300">
+                    <h3 class="text-xl mb-2">Empathy-Driven</h3>
+                    <p class="text-sm text-FDEBD0">We design with the end-user in mind, creating experiences that truly resonate.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Call to Action Section -->
+        <section id="cta" class="my-20 animated-section text-center">
+            <h2 class="text-3xl md:text-4xl mb-4 text-FDEBD0 glow-heading">Ready to elevate your brand?</h2>
+            <p class="text-lg text-FDEBD0 mb-8">Let's build something beautiful together. Reach out and start your creative journey with us.</p>
+            <a href="#" class="cta-btn inline-block px-10 py-4 font-semibold text-lg rounded-full">Book a Free Consult Today</a>
+        </section>
+        
+        <!-- Button to open background modal, now hidden by default -->
+        <button id="open-bg-modal" class="fixed bottom-6 right-6 p-4 rounded-full glass-container text-FDEBD0 shadow-xl hover:scale-110 transition-transform hidden">
+            <!-- SVG for eye icon -->
+            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+                <path d="M10 12a2 2 0 100-4 2 2 0 000 4z" />
+                <path fill-rule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clip-rule="evenodd" />
+            </svg>
+        </button>
+
+    </div>
+
+    <!-- JavaScript for interactivity and the new sparkle effect -->
+    <script type="module">
+        // Import Firebase modules for authentication and firestore
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // Global variables provided by the canvas environment
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+        const firebaseConfig = JSON.parse(typeof __firebase_config !== 'undefined' ? __firebase_config : '{}');
+        const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : '';
+        let db, auth;
+
+        // Function to initialize Firebase
+        async function initializeFirebase() {
+            try {
+                const app = initializeApp(firebaseConfig);
+                auth = getAuth(app);
+                db = getFirestore(app);
+
+                // Sign in the user using the custom auth token or anonymously as a fallback
+                if (initialAuthToken) {
+                    await signInWithCustomToken(auth, initialAuthToken);
+                } else {
+                    await signInAnonymously(auth);
+                }
+            } catch (error) {
+                console.error("Firebase initialization failed:", error);
+            }
+        }
+        
+        document.addEventListener('DOMContentLoaded', async () => {
+            // Initialize Firebase first
+            await initializeFirebase();
+            
+            // Wait for authentication state to be ready
+            onAuthStateChanged(auth, (user) => {
+                const openBgModalBtn = document.getElementById('open-bg-modal');
+                // Only show the button if a user is logged in
+                if (user) {
+                    openBgModalBtn.classList.remove('hidden');
+                } else {
+                    openBgModalBtn.classList.add('hidden');
+                }
+            });
+
+            // --- SCROLL-TRIGGERED ANIMATIONS ---
+            const animatedSections = document.querySelectorAll('.animated-section');
+
+            const observerOptions = {
+                root: null,
+                rootMargin: '0px',
+                threshold: 0.1 // Trigger when 10% of the section is visible
+            };
+
+            const sectionObserver = new IntersectionObserver((entries, observer) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('is-visible');
+                        observer.unobserve(entry.target); // Stop observing once it's visible
+                    }
+                });
+            }, observerOptions);
+
+            animatedSections.forEach(section => {
+                sectionObserver.observe(section);
+            });
+
+            // --- ACCORDION LOGIC ---
+            const accordionItems = document.querySelectorAll('.accordion-item');
+
+            accordionItems.forEach(item => {
+                const header = item.querySelector('.accordion-header');
+                header.addEventListener('click', () => {
+                    const content = item.querySelector('.accordion-content');
+                    const icon = header.querySelector('svg');
+
+                    // Close other open accordions
+                    accordionItems.forEach(otherItem => {
+                        if (otherItem !== item && otherItem.classList.contains('open')) {
+                            otherItem.classList.remove('open');
+                            otherItem.querySelector('.accordion-content').style.maxHeight = '0';
+                            otherItem.querySelector('svg').style.transform = 'rotate(0deg)';
+                        }
+                    });
+
+                    // Toggle current accordion
+                    if (item.classList.contains('open')) {
+                        item.classList.remove('open');
+                        content.style.maxHeight = '0';
+                        icon.style.transform = 'rotate(0deg)';
+                    } else {
+                        item.classList.add('open');
+                        content.style.maxHeight = content.scrollHeight + 'px'; // Set height to fit content
+                        icon.style.transform = 'rotate(45deg)';
+                    }
+                });
+            });
+            
+            // --- TESTIMONIAL SLIDER ---
+            const testimonialTrack = document.querySelector('.testimonial-track');
+            const testimonialCards = document.querySelectorAll('.testimonial-card');
+            const prevBtn = document.querySelector('.slider-btn.prev-btn');
+            const nextBtn = document.querySelector('.slider-btn.next-btn');
+
+            let currentIndex = 0;
+            const totalCards = testimonialCards.length;
+            
+            const updateSlider = () => {
+                const offset = -currentIndex * 100;
+                testimonialTrack.style.transform = `translateX(${offset}%)`;
+            };
+
+            nextBtn.addEventListener('click', () => {
+                currentIndex = (currentIndex + 1) % totalCards;
+                updateSlider();
+            });
+
+            prevBtn.addEventListener('click', () => {
+                currentIndex = (currentIndex - 1 + totalCards) % totalCards;
+                updateSlider();
+            });
+
+            // Auto-slide functionality
+            setInterval(() => {
+                nextBtn.click();
+            }, 5000); // Change slide every 5 seconds
+
+            // --- BACKGROUND CUSTOMIZATION MODAL ---
+            const bgModal = document.getElementById('bg-modal');
+            const openBgModalBtn = document.getElementById('open-bg-modal');
+            const closeModalBtn = document.getElementById('close-modal');
+            const dropArea = document.getElementById('drop-area');
+            const fileInput = document.getElementById('bg-upload');
+            const bgUrlInput = document.getElementById('bg-url');
+            const bgPreviewContainer = document.getElementById('bg-preview-container');
+            const bgPreview = document.getElementById('bg-preview');
+            const applyBgBtn = document.getElementById('apply-bg');
+            const removeBgBtn = document.getElementById('remove-bg');
+            
+            // Open modal
+            openBgModalBtn.addEventListener('click', () => {
+                // Clear inputs and preview when the modal is opened
+                bgUrlInput.value = '';
+                bgPreview.src = '';
+                bgPreviewContainer.classList.add('hidden');
+
+                bgModal.classList.remove('hidden');
+            });
+
+            // Close modal
+            closeModalBtn.addEventListener('click', () => {
+                bgModal.classList.add('hidden');
+            });
+
+            // Handle drag events
+            ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+                dropArea.addEventListener(eventName, preventDefaults, false);
+            });
+
+            function preventDefaults(e) {
+                e.preventDefault();
+                e.stopPropagation();
+            }
+
+            // Highlight drop area on drag
+            ['dragenter', 'dragover'].forEach(eventName => {
+                dropArea.addEventListener(eventName, () => {
+                    dropArea.classList.add('bg-white/10');
+                    dropArea.classList.add('border-[#F39C12]');
+                }, false);
+            });
+
+            // Remove highlight on drag leave/drop
+            ['dragleave', 'drop'].forEach(eventName => {
+                dropArea.addEventListener(eventName, () => {
+                    dropArea.classList.remove('bg-white/10');
+                    dropArea.classList.remove('border-[#F39C12]');
+                }, false);
+            });
+
+            // Handle file drop
+            dropArea.addEventListener('drop', handleDrop, false);
+
+            function handleDrop(e) {
+                const dt = e.dataTransfer;
+                const files = dt.files;
+                handleFiles(files);
+            }
+
+            // Handle file input change
+            fileInput.addEventListener('change', (e) => {
+                handleFiles(e.target.files);
+            });
+
+            // Handle URL input change
+            bgUrlInput.addEventListener('input', (e) => {
+                if (e.target.value.length > 0) {
+                    bgPreview.src = e.target.value;
+                    bgPreviewContainer.classList.remove('hidden');
+                } else {
+                    bgPreviewContainer.classList.add('hidden');
+                    bgPreview.src = '';
+                }
+            });
+
+            function handleFiles(files) {
+                const file = files[0];
+                if (file && file.type.startsWith('image/')) {
+                    const reader = new FileReader();
+                    reader.onload = (e) => {
+                        bgPreview.src = e.target.result;
+                        bgPreviewContainer.classList.remove('hidden');
+                    };
+                    reader.readAsDataURL(file);
+                }
+            }
+
+            // Apply background
+            applyBgBtn.addEventListener('click', () => {
+                const selectedImage = bgPreview.src;
+                if (selectedImage) {
+                    document.body.style.backgroundImage = `url('${selectedImage}')`;
+                    document.body.style.animation = 'none'; // Stop gradient animation
+                    document.body.style.backgroundSize = 'cover';
+                    document.body.style.backgroundPosition = 'center';
+                    bgModal.classList.add('hidden');
+                }
+            });
+
+            // Remove background functionality
+            removeBgBtn.addEventListener('click', () => {
+                document.body.style.backgroundImage = ''; // Remove the image
+                document.body.style.animation = 'gradient-animation 8s linear infinite'; // Restart the original animation
+                document.body.style.backgroundSize = '500% 500%';
+                document.body.style.backgroundPosition = '0% 50%';
+                bgModal.classList.add('hidden');
+            });
+            
+            // --- SPARKLE EFFECT SCRIPT ---
+            const canvas = document.getElementById('sparkle-canvas');
+            const ctx = canvas.getContext('2d');
+
+            let width, height;
+            let particles = [];
+            let lastTime = 0;
+            const spawnInterval = 100; // milliseconds
+
+            // Function to resize canvas to full screen
+            function resizeCanvas() {
+                width = canvas.width = window.innerWidth;
+                height = canvas.height = window.innerHeight;
+            }
+
+            // Call resize initially and on window resize
+            resizeCanvas();
+            window.addEventListener('resize', resizeCanvas);
+
+            // Particle class to manage each individual sparkle
+            class Particle {
+                constructor() {
+                    this.x = Math.random() * width;
+                    this.y = Math.random() * height;
+                    this.size = Math.random() * 2 + 0.5;
+                    this.speedX = (Math.random() - 0.5) * 0.1;
+                    this.speedY = (Math.random() - 0.5) * 0.1;
+                    this.opacity = Math.random() * 0.5 + 0.5; // Start with a non-zero opacity
+                    this.fadeSpeed = (Math.random() * 0.005 + 0.001) * (Math.random() > 0.5 ? 1 : -1);
+                }
+
+                // Update particle's position and opacity
+                update() {
+                    this.x += this.speedX;
+                    this.y += this.speedY;
+
+                    if (this.x > width || this.x < 0) this.speedX *= -1;
+                    if (this.y > height || this.y < 0) this.speedY *= -1;
+
+                    // Pulsating glow effect
+                    this.opacity += this.fadeSpeed;
+                    if (this.opacity > 1 || this.opacity < 0.5) {
+                        this.fadeSpeed *= -1;
+                    }
+                }
+
+                // Draw the particle on the canvas with a glow
+                draw() {
+                    ctx.beginPath();
+                    ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                    
+                    // Add a glow effect
+                    ctx.shadowBlur = 15;
+                    ctx.shadowColor = `rgba(243, 156, 18, ${this.opacity})`;
+                    ctx.fillStyle = `rgba(243, 156, 18, ${this.opacity})`;
+
+                    ctx.fill();
+
+                    // Reset shadow properties to avoid affecting other drawings
+                    ctx.shadowBlur = 0;
+                    ctx.shadowColor = 'transparent';
+                }
+            }
+
+            // Function to create new particles
+            function createParticles() {
+                // Add new particles until a certain number is reached
+                if (particles.length < 300) {
+                    particles.push(new Particle());
+                }
+            }
+            
+            // The main animation loop
+            function animate(timestamp) {
+                // Clear the canvas on each frame to redraw
+                ctx.clearRect(0, 0, width, height);
+
+                // Update and draw each particle
+                particles.forEach(particle => {
+                    particle.update();
+                    particle.draw();
+                });
+
+                // Spawn new particles based on the interval
+                if (timestamp - lastTime > spawnInterval) {
+                    createParticles();
+                    lastTime = timestamp;
+                }
+
+                // Request the next animation frame
+                requestAnimationFrame(animate);
+            }
+
+            // Start the animation loop
+            animate(0);
+        });
+    </script>
+
+</body>
+</html>
