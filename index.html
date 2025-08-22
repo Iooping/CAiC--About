@@ -6,6 +6,8 @@
     <title>About Us | Cordova ai Creatives</title>
     <!-- Use Tailwind CSS for modern, utility-first styling -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome for professional social media icons and theme toggle icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         /* Import the new fonts */
         @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&family=Inter:wght@400;600;700&display=swap');
@@ -19,41 +21,129 @@
             box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
             border: 1px solid rgba(255, 255, 255, 0.2);
             padding: 2rem;
+            transition: all 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
         }
 
-        /* Custom animations for section reveals on scroll */
+        /* Scroll-triggered animation for a more dynamic entrance */
         .animated-section {
             opacity: 0;
-            transform: translateY(40px);
-            transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+            transform: translateY(100px) rotateZ(-2deg);
+            transition: opacity 1.2s cubic-bezier(0.175, 0.885, 0.32, 1.275), 
+                        transform 1.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
 
         .animated-section.is-visible {
             opacity: 1;
-            transform: translateY(0);
+            transform: translateY(0) rotateZ(0);
         }
 
-        /* Dynamic gradient background for body with animation using the new colors */
+        /* ---------------------------------------------------- */
+        /* DEFAULT THEME: DARK NIGHT (newly defined) */
+        /* ---------------------------------------------------- */
         body {
             font-family: 'Inter', sans-serif;
-            background: linear-gradient(135deg, #801A1A, #C0392B, #F39C12);
+            background: linear-gradient(135deg, #0A192F, #1F2E4A, #0A192F);
             background-size: 500% 500%;
-            animation: gradient-animation 8s linear infinite;
-            color: #FDEBD0; /* Light cream for text */
+            animation: gradient-animation 6s linear infinite;
+            color: #FDEBD0; /* Light cream for text, provides good contrast */
             min-height: 100vh;
         }
 
-        /* Position the canvas to cover the whole background, behind everything else */
-        #sparkle-canvas {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: -1;
-            pointer-events: none; /* Allows clicks to pass through to the elements below */
+        .main-title, .glow-heading {
+            color: #FFFFFF;
+            text-shadow: 0 0 10px #99CCFF, 0 0 20px #99CCFF; /* Cool blue glow */
+            animation: glow-pulse 2s infinite alternate;
         }
 
+        .cta-btn {
+            background-color: #99CCFF; /* Cool blue for CTA button */
+            color: #0A192F; /* Deep blue text for contrast */
+            transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+
+        .cta-btn:hover {
+            box-shadow: 0 0 20px 8px rgba(153, 204, 255, 0.8);
+            transform: scale(1.05) translateY(-4px);
+        }
+
+        .timeline-node {
+            background-color: #99CCFF;
+            border: 3px solid #0A192F;
+        }
+
+        .timeline-node::before {
+            color: #99CCFF;
+        }
+
+        .social-icon {
+            color: #FDEBD0;
+        }
+
+        .social-icon:hover {
+            color: #99CCFF;
+        }
+
+        /* ---------------------------------------------------- */
+        /* SUNNY DAY THEME (NEW) */
+        /* ---------------------------------------------------- */
+        body.sunny-day {
+            background: linear-gradient(135deg, #87CEEB, #F0E68C, #FFFACD);
+            background-size: 500% 500%;
+            animation: sunny-gradient-animation 6s linear infinite;
+            color: #333333; /* Dark gray for text */
+        }
+
+        body.sunny-day .glass-container {
+            background-color: rgba(255, 255, 255, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.2);
+        }
+
+        body.sunny-day h1, body.sunny-day h2, body.sunny-day h3 {
+            text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.7);
+        }
+
+        body.sunny-day .main-title, body.sunny-day .glow-heading {
+            /* This is the updated line */
+            color: #FFFFFF; /* White base text */
+            text-shadow: 0 0 10px #FFD700, 0 0 20px #FFD700; /* Yellow glow */
+            animation: sunny-glow-pulse 2s infinite alternate;
+        }
+
+        body.sunny-day .cta-btn {
+            background-color: #FFD700; /* Gold for CTA */
+            color: #333333;
+        }
+
+        body.sunny-day .cta-btn:hover {
+            box-shadow: 0 0 20px 8px rgba(255, 215, 0, 0.8);
+        }
+
+        body.sunny-day .timeline-node {
+            background-color: #FFD700;
+            border: 3px solid #87CEEB; /* Sky blue border */
+        }
+
+        body.sunny-day .timeline-node::before {
+            color: #333333;
+        }
+
+        body.sunny-day .timeline-node::after {
+            color: #333333;
+        }
+
+        body.sunny-day .social-icon {
+            color: #333333;
+        }
+
+        body.sunny-day .social-icon:hover {
+            color: #FFD700;
+        }
+
+        /* ---------------------------------------------------- */
+        /* KEYFRAMES FOR ANIMATIONS */
+        /* ---------------------------------------------------- */
+        /* Dark night gradient animation */
         @keyframes gradient-animation {
             0% {
                 background-position: 0% 50%;
@@ -66,40 +156,53 @@
             }
         }
 
-        /* Custom fonts and colors for headings with added text-shadow for contrast */
+        /* Dark night glow pulse animation */
+        @keyframes glow-pulse {
+            0% {
+                text-shadow: 0 0 5px #99CCFF, 0 0 10px #99CCFF;
+            }
+            100% {
+                text-shadow: 0 0 15px #99CCFF, 0 0 25px #99CCFF;
+            }
+        }
+
+        /* NEW: Sunny day gradient animation */
+        @keyframes sunny-gradient-animation {
+            0% {
+                background-position: 0% 50%;
+            }
+            50% {
+                background-position: 100% 50%;
+            }
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+
+        /* NEW: Sunny day glow pulse animation */
+        @keyframes sunny-glow-pulse {
+            0% {
+                text-shadow: 0 0 5px #FFD700, 0 0 10px #FFD700;
+            }
+            100% {
+                text-shadow: 0 0 15px #FFD700, 0 0 25px #FFD700;
+            }
+        }
+
+        /* Other common styles */
         h1, h2, h3 {
             font-family: 'Montserrat', sans-serif;
-            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.7);
         }
         
-        /* The main Cordova AI Creatives title text is pure white for a stronger contrast and impact */
-        .main-title {
-            color: #FFFFFF;
-        }
-        
-        /* Add a subtle glow to the main title and specific headings to match the fireflies effect */
-        .main-title, .glow-heading {
-            color: #FFFFFF; /* Set the base color to white */
-            text-shadow: 0 0 10px #F39C12, 0 0 20px #F39C12; /* Keep the golden glow */
-        }
-        
-        /* The h3 headings get a different color to differentiate them from the glowing headings */
-        h3 {
-            color: #F39C12;
-        }
-
-
-        /* Accordion transition for a smooth open/close effect */
         .accordion-content {
             max-height: 0;
             overflow: hidden;
             transition: max-height 0.4s ease-in-out;
         }
         .accordion-item.open .accordion-content {
-            max-height: 500px; /* Adjust as needed, makes content visible */
+            max-height: 500px;
         }
         
-        /* Testimonial slider styles */
         .testimonial-slider {
             overflow: hidden;
         }
@@ -112,32 +215,17 @@
             width: 100%;
         }
 
-        /* Custom button styling for call-to-action */
-        .cta-btn {
-            background-color: #F39C12; /* Golden yellow for CTA button */
-            color: #801A1A; /* Deep maroon text for contrast */
-            transition: all 0.3s ease;
-        }
-        .cta-btn:hover {
-            box-shadow: 0 0 15px 5px rgba(243, 156, 18, 0.6); /* Golden yellow hover effect */
-            transform: translateY(-2px);
-        }
-
-        /* Custom background modal styles */
         #bg-modal {
             background: rgba(0, 0, 0, 0.7);
             backdrop-filter: blur(5px);
             -webkit-backdrop-filter: blur(5px);
         }
 
-        /* Ensure timeline dots are positioned correctly */
         .timeline-node {
             position: relative;
             width: 20px;
             height: 20px;
-            background-color: #F39C12; /* Golden yellow */
             border-radius: 50%;
-            border: 3px solid #801A1A; /* Deep maroon */
         }
         .timeline-node::before {
             content: attr(data-year);
@@ -147,7 +235,6 @@
             transform: translateX(-50%);
             white-space: nowrap;
             font-weight: bold;
-            color: #F39C12;
         }
         .timeline-node::after {
             content: attr(data-text);
@@ -157,8 +244,12 @@
             transform: translateX(-50%);
             width: 150px;
             text-align: center;
-            font-size: 0.875rem;
-            color: #FDEBD0;
+            font-size: 1rem;
+        }
+
+        .social-icon {
+            font-size: 2.5rem;
+            transition: transform 0.3s ease-in-out;
         }
     </style>
 </head>
@@ -169,6 +260,11 @@
         Customize BG
     </button>
     
+    <!-- NEW: Theme Toggle Button -->
+    <button id="theme-toggle" class="fixed top-4 right-28 z-40 cta-btn px-4 py-2 text-sm rounded-full">
+        <i id="theme-icon" class="fa-solid fa-sun"></i>
+    </button>
+
     <!-- Canvas for the sparkling background effect -->
     <canvas id="sparkle-canvas"></canvas>
 
@@ -177,21 +273,34 @@
         <div class="glass-container p-6 w-11/12 md:w-2/3 lg:w-1/2">
             <h3 class="text-3xl mb-4 text-center">Customize Your Background</h3>
             
-            <div id="drop-area" class="border-4 border-dashed border-gray-400 p-8 text-center rounded-lg cursor-pointer transition-colors duration-300 hover:border-F39C12">
-                <p>Drag & Drop an image here, or</p>
-                <input type="file" id="bg-upload" class="hidden" accept="image/*">
-                <label for="bg-upload" class="cta-btn inline-block mt-4 px-6 py-2 rounded-full">
-                    Choose a File
-                </label>
-            </div>
-
-            <div class="my-6 text-center">
-                <p class="text-FDEBD0">— OR —</p>
-            </div>
-
-            <div class="flex flex-col gap-2">
-                <label for="bg-url" class="text-FDEBD0">Paste an image link:</label>
-                <input type="url" id="bg-url" placeholder="e.g. https://example.com/image.jpg" class="w-full p-3 rounded-lg bg-white/10 text-FDEBD0 border border-white/20 focus:outline-none focus:ring-2 focus:ring-[#F39C12]">
+            <!-- Predefined backgrounds -->
+            <div class="mb-8">
+                <h4 class="text-xl md:text-2xl mb-4 text-center text-FDEBD0">Choose a Predefined Background</h4>
+                <div id="predefined-options" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
+                    <!-- Predefined Image 1: Abstract Tech -->
+                    <img src="https://i.postimg.cc/KvWjwCwq/generate-a-backgroun.png" 
+                         data-bg-url="https://i.postimg.cc/KvWjwCwq/generate-a-backgroun.png"
+                         class="predefined-bg-image w-full h-24 sm:h-32 rounded-lg object-cover cursor-pointer hover:ring-4 hover:ring-[#99CCFF] transition-all duration-300"
+                         alt="Abstract tech background">
+                    
+                    <!-- Predefined Image 2: Digital Cityscape -->
+                    <img src="https://i.postimg.cc/SxzPfzcT/Gemini-Generated-Image-6y0b9m6y0b9m6y0b.png"
+                         data-bg-url="https://i.postimg.cc/SxzPfzcT/Gemini-Generated-Image-6y0b9m6y0b9m6y0b.png"
+                         class="predefined-bg-image w-full h-24 sm:h-32 rounded-lg object-cover cursor-pointer hover:ring-4 hover:ring-[#99CCFF] transition-all duration-300"
+                         alt="Digital cityscape background">
+                    
+                    <!-- Predefined Image 3: Gradient Wave -->
+                    <img src="https://i.postimg.cc/pTDxG68S/sssss.png"
+                         data-bg-url="https://i.postimg.cc/pTDxG68S/sssss.png"
+                         class="predefined-bg-image w-full h-24 sm:h-32 rounded-lg object-cover cursor-pointer hover:ring-4 hover:ring-[#99CCFF] transition-all duration-300"
+                         alt="Gradient wave background">
+                    
+                    <!-- Predefined Image 4: Futuristic Circuit Board -->
+                    <img src="https://i.postimg.cc/QC02vGMf/Gemini-Generated-Image-tumbystumbystumb-1.png"
+                         data-bg-url="https://i.postimg.cc/QC02vGMf/Gemini-Generated-Image-tumbystumbystumb-1.png"
+                         class="predefined-bg-image w-full h-24 sm:h-32 rounded-lg object-cover cursor-pointer hover:ring-4 hover:ring-[#99CCFF] transition-all duration-300"
+                         alt="Futuristic circuit board background">
+                </div>
             </div>
 
             <div id="bg-preview-container" class="mt-4 hidden relative overflow-hidden rounded-lg" style="height: 250px;">
@@ -212,17 +321,16 @@
 
         <!-- Header Section -->
         <header class="text-center mb-16 animated-section">
-            <!-- Updated to make CAiC the main title and Cordova ai Creatives the subtitle -->
             <h1 class="text-5xl md:text-6xl font-extrabold main-title mb-2">CaiC</h1>
-            <h2 class="text-2xl md:text-3xl font-bold tracking-tight text-[#F39C12]">Cordova ai Creatives</h2>
-            <p class="text-lg md:text-xl mt-2 text-FDEBD0">Where Filipino Ingenuity Meets Artificial Intelligence.</p>
+            <h2 class="text-2xl md:text-3xl font-bold tracking-tight text-[#99CCFF]">Cordova ai Creatives</h2>
+            <p class="text-lg md:text-xl mt-2">Where Filipino Ingenuity Meets Artificial Intelligence.</p>
         </header>
 
         <!-- Mission & Vision Section -->
         <section id="mission" class="my-20 animated-section">
             <div class="text-center">
                 <h2 class="text-3xl md:text-4xl mb-4 glow-heading">Our Vision & Mission</h2>
-                <p class="text-lg mb-6 max-w-3xl mx-auto text-FDEBD0">
+                <p class="text-lg mb-6 max-w-3xl mx-auto">
                     To empower Filipino brands and student groups by delivering culturally relevant, AI-powered design and storytelling. We envision a future where local creativity thrives on a global stage, propelled by brilliant technology.
                 </p>
             </div>
@@ -237,7 +345,7 @@
                     <div class="timeline-node" data-year="2021" data-text="...to launching Aristoshots, a local multimedia studio."></div>
                     <div class="timeline-node" data-year="Present" data-text="Founding CaiC, merging creativity with AI."></div>
                 </div>
-                <div class="absolute top-1/2 left-0 w-full h-1 bg-[#801A1A] -translate-y-1/2"></div>
+                <div class="absolute top-1/2 left-0 w-full h-1 bg-[#0A192F] -translate-y-1/2"></div>
             </div>
         </section>
 
@@ -254,7 +362,7 @@
                         </svg>
                     </div>
                     <div class="accordion-content pt-4">
-                        <p class="text-FDEBD0">We leverage AI to analyze market trends and audience data, ensuring that your brand's visual identity is not only beautiful but also strategically sound and highly effective.</p>
+                        <p class="text-base">We leverage AI to analyze market trends and audience data, ensuring that your brand's visual identity is not only beautiful but also strategically sound and highly effective.</p>
                     </div>
                 </div>
                 <!-- Accordion Item 2 -->
@@ -266,7 +374,7 @@
                         </svg>
                     </div>
                     <div class="accordion-content pt-4">
-                        <p class="text-FDEBD0">Receive a flexible library of brand assets that can be easily adapted for any platform, ensuring consistency and saving you time. Our designs are built to evolve with your needs.</p>
+                        <p class="text-base">Receive a flexible library of brand assets that can be easily adapted for any platform, ensuring consistency and saving you time. Our designs are built to evolve with your needs.</p>
                     </div>
                 </div>
                 <!-- Accordion Item 3 -->
@@ -278,7 +386,7 @@
                         </svg>
                     </div>
                     <div class="accordion-content pt-4">
-                        <p class="text-FDEBD0">Our AI models are specially fine-tuned with Filipino art, symbols, and design principles. The result is a unique, authentic aesthetic that speaks directly to the local market.</p>
+                        <p class="text-base">Our AI models are specially fine-tuned with Filipino art, symbols, and design principles. The result is a unique, authentic aesthetic that speaks directly to the local market.</p>
                     </div>
                 </div>
             </div>
@@ -288,21 +396,21 @@
         <section id="services" class="my-20 animated-section">
             <h2 class="text-3xl md:text-4xl mb-8 text-center glow-heading">Services Snapshot</h2>
             <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-                <div class="glass-container p-6 text-center hover:scale-105 transition-transform duration-300">
+                <div class="glass-container p-6 text-center transition-transform duration-300 hover:scale-110 hover:-translate-y-2">
                     <h3 class="text-xl mb-2">Branding Kits</h3>
-                    <p class="text-sm text-FDEBD0">Logos, color palettes, and guidelines, generated and refined with AI.</p>
+                    <p class="text-base">Logos, color palettes, and guidelines, generated and refined with AI.</p>
                 </div>
-                <div class="glass-container p-6 text-center hover:scale-105 transition-transform duration-300">
+                <div class="glass-container p-6 text-center transition-transform duration-300 hover:scale-110 hover:-translate-y-2">
                     <h3 class="text-xl mb-2">Web Design</h3>
-                    <p class="text-sm text-FDEBD0">Responsive websites with AI-driven UX/UI for optimal user experience.</p>
+                    <p class="text-base">Responsive websites with AI-driven UX/UI for optimal user experience.</p>
                 </div>
-                <div class="glass-container p-6 text-center hover:scale-105 transition-transform duration-300">
+                <div class="glass-container p-6 text-center transition-transform duration-300 hover:scale-110 hover:-translate-y-2">
                     <h3 class="text-xl mb-2">Social Media Automation</h3>
-                    <p class="text-sm text-FDEBD0">Automated content generation and scheduling to keep your brand active.</p>
+                    <p class="text-base">Automated content generation and scheduling to keep your brand active.</p>
                 </div>
-                <div class="glass-container p-6 text-center hover:scale-105 transition-transform duration-300">
+                <div class="glass-container p-6 text-center transition-transform duration-300 hover:scale-110 hover:-translate-y-2">
                     <h3 class="text-xl mb-2">AI Agent Setup</h3>
-                    <p class="text-sm text-FDEBD0">Custom chatbots and virtual assistants tailored for your business needs.</p>
+                    <p class="text-base">Custom chatbots and virtual assistants tailored for your business needs.</p>
                 </div>
             </div>
         </section>
@@ -313,7 +421,7 @@
             <div class="flex flex-col md:flex-row gap-8">
                 <div class="md:w-1/2">
                     <h3 class="text-2xl mb-4">Awards & Engagements</h3>
-                    <ul class="list-disc list-inside space-y-2 text-FDEBD0">
+                    <ul class="list-disc list-inside space-y-2 text-base">
                         <li>Google BI & Cybersecurity Certifications</li>
                         <li>Avid Attendee of Google DevFest Bacolod</li>
                         <li>Avid Attendee of GDG Bacolod Workshops</li>
@@ -325,16 +433,16 @@
                         <div class="testimonial-track">
                             <!-- Testimonial Cards -->
                             <div class="testimonial-card text-center flex-shrink-0">
-                                <p class="italic text-FDEBD0">"CaiC took our brand identity to the next level. The AI-driven insights were a game-changer for our marketing strategy."</p>
-                                <p class="mt-4 font-bold text-[#F39C12]">- Jane Doe, CEO of Local Eats PH</p>
+                                <p class="italic text-base">"CaiC took our brand identity to the next level. The AI-driven insights were a game-changer for our marketing strategy."</p>
+                                <p class="mt-4 font-bold">- Jane Doe, CEO of Local Eats PH</p>
                             </div>
                             <div class="testimonial-card text-center flex-shrink-0">
-                                <p class="italic text-FDEBD0">"The web design was stunning and intuitive. We saw an immediate boost in engagement and conversions."</p>
-                                <p class="mt-4 font-bold text-[#F39C12]">- John Smith, Founder of EduConnect</p>
+                                <p class="italic text-base">"The web design was stunning and intuitive. We saw an immediate boost in engagement and conversions."</p>
+                                <p class="mt-4 font-bold">- John Smith, Founder of EduConnect</p>
                             </div>
                             <div class="testimonial-card text-center flex-shrink-0">
-                                <p class="italic text-FDEBD0">"Working with Joshua was a breeze. He combined technical expertise with a creative flair that is unmatched."</p>
-                                <p class="mt-4 font-bold text-[#F39C12]">- Maria Gomez, Marketing Head at TechSpark</p>
+                                <p class="italic text-base">"Working with Joshua was a breeze. He combined technical expertise with a creative flair that is unmatched."</p>
+                                <p class="mt-4 font-bold">- Maria Gomez, Marketing Head at TechSpark</p>
                             </div>
                         </div>
                         <div class="flex justify-center mt-4">
@@ -350,30 +458,48 @@
         <section id="values" class="my-20 animated-section">
             <h2 class="text-3xl md:text-4xl mb-8 text-center glow-heading">Our Values & Approach</h2>
             <div class="grid md:grid-cols-2 gap-6">
-                <div class="glass-container p-6 text-center hover:scale-105 transition-transform duration-300">
+                <div class="glass-container p-6 text-center transition-transform duration-300 hover:scale-110 hover:-translate-y-2">
                     <h3 class="text-xl mb-2">Clarity</h3>
-                    <p class="text-sm text-FDEBD0">We believe in clear communication and transparent processes to build trust.</p>
+                    <p class="text-base">We believe in clear communication and transparent processes to build trust.</p>
                 </div>
-                <div class="glass-container p-6 text-center hover:scale-105 transition-transform duration-300">
+                <div class="glass-container p-6 text-center transition-transform duration-300 hover:scale-110 hover:-translate-y-2">
                     <h3 class="text-xl mb-2">Collaboration</h3>
-                    <p class="text-sm text-FDEBD0">We work with you, not just for you. Your vision is our blueprint.</p>
+                    <p class="text-base">We work with you, not just for you. Your vision is our blueprint.</p>
                 </div>
-                <div class="glass-container p-6 text-center hover:scale-105 transition-transform duration-300">
+                <div class="glass-container p-6 text-center transition-transform duration-300 hover:scale-110 hover:-translate-y-2">
                     <h3 class="text-xl mb-2">Modularity</h3>
-                    <p class="text-sm text-FDEBD0">Our solutions are designed to be flexible and scalable for future growth.</p>
+                    <p class="text-base">Our solutions are designed to be flexible and scalable for future growth.</p>
                 </div>
-                <div class="glass-container p-6 text-center hover:scale-105 transition-transform duration-300">
+                <div class="glass-container p-6 text-center transition-transform duration-300 hover:scale-110 hover:-translate-y-2">
                     <h3 class="text-xl mb-2">Empathy-Driven</h3>
-                    <p class="text-sm text-FDEBD0">We design with the end-user in mind, creating experiences that truly resonate.</p>
+                    <p class="text-base">We design with the end-user in mind, creating experiences that truly resonate.</p>
                 </div>
             </div>
         </section>
 
-        <!-- Call to Action Section -->
+        <!-- Call to Action Section with Social Links -->
         <section id="cta" class="my-20 animated-section text-center">
-            <h2 class="text-3xl md:text-4xl mb-4 text-FDEBD0 glow-heading">Ready to elevate your brand?</h2>
-            <p class="text-lg text-FDEBD0 mb-8">Let's build something beautiful together. Reach out and start your creative journey with us.</p>
-            <a href="#" class="cta-btn inline-block px-10 py-4 font-semibold text-lg rounded-full">Book a Free Consult Today</a>
+            <h2 class="text-3xl md:text-4xl mb-4 glow-heading">Ready to elevate your brand?</h2>
+            <p class="text-lg mb-8">Let's build something beautiful together. Connect with us on social media!</p>
+            
+            <!-- Social Media Links with Font Awesome Icons -->
+            <div class="flex justify-center space-x-6">
+                <!-- Instagram Link -->
+                <a href="https://www.instagram.com/orins.juice/" class="social-icon transition-colors duration-300 transform hover:scale-125">
+                    <i class="fa-brands fa-instagram"></i>
+                </a>
+                
+                <!-- Facebook Link -->
+                <a href="https://www.facebook.com/joshua.cordova29" class="social-icon transition-colors duration-300 transform hover:scale-125">
+                    <i class="fa-brands fa-facebook-f"></i>
+                </a>
+                
+                <!-- LinkedIn Link -->
+                <a href="https://www.linkedin.com/in/joshua-cordova-445442247/" class="social-icon transition-colors duration-300 transform hover:scale-125">
+                    <i class="fa-brands fa-linkedin-in"></i>
+                </a>
+            </div>
+            
         </section>
         
     </div>
@@ -387,7 +513,7 @@
                 const observerOptions = {
                     root: null,
                     rootMargin: '0px',
-                    threshold: 0.1 // Trigger when 10% of the section is visible
+                    threshold: 0.2
                 };
                 const sectionObserver = new IntersectionObserver((entries, observer) => {
                     entries.forEach(entry => {
@@ -467,29 +593,31 @@
                 console.error("Testimonial slider failed:", error);
             }
             
-            // --- SPARKLE EFFECT SCRIPT ---
+            // --- SPARKLE EFFECT SCRIPT (Updated to handle theme change) ---
             try {
                 const canvas = document.getElementById('sparkle-canvas');
                 const ctx = canvas.getContext('2d');
                 let width, height;
                 let particles = [];
                 let lastTime = 0;
-                const spawnInterval = 100;
+                const spawnInterval = 50;
+
                 function resizeCanvas() {
                     width = canvas.width = window.innerWidth;
                     height = canvas.height = window.innerHeight;
                 }
                 resizeCanvas();
                 window.addEventListener('resize', resizeCanvas);
+
                 class Particle {
                     constructor() {
                         this.x = Math.random() * width;
                         this.y = Math.random() * height;
-                        this.size = Math.random() * 2 + 0.5;
-                        this.speedX = (Math.random() - 0.5) * 0.1;
-                        this.speedY = (Math.random() - 0.5) * 0.1;
-                        this.opacity = Math.random() * 0.5 + 0.5;
-                        this.fadeSpeed = (Math.random() * 0.005 + 0.001) * (Math.random() > 0.5 ? 1 : -1);
+                        this.size = Math.random() * 3 + 1;
+                        this.speedX = (Math.random() - 0.5) * 0.5;
+                        this.speedY = (Math.random() - 0.5) * 0.5;
+                        this.opacity = Math.random() * 0.7 + 0.3;
+                        this.fadeSpeed = (Math.random() * 0.01 + 0.005) * (Math.random() > 0.5 ? 1 : -1);
                     }
                     update() {
                         this.x += this.speedX;
@@ -497,26 +625,34 @@
                         if (this.x > width || this.x < 0) this.speedX *= -1;
                         if (this.y > height || this.y < 0) this.speedY *= -1;
                         this.opacity += this.fadeSpeed;
-                        if (this.opacity > 1 || this.opacity < 0.5) {
+                        if (this.opacity > 1 || this.opacity < 0.3) {
                             this.fadeSpeed *= -1;
                         }
                     }
                     draw() {
                         ctx.beginPath();
                         ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-                        ctx.shadowBlur = 15;
-                        ctx.shadowColor = `rgba(243, 156, 18, ${this.opacity})`;
-                        ctx.fillStyle = `rgba(243, 156, 18, ${this.opacity})`;
+
+                        // Dynamically change sparkle color based on theme
+                        let sparkleColor = document.body.classList.contains('sunny-day') 
+                            ? `rgba(255, 223, 0, ${this.opacity})` // Gold/yellow for sunny day
+                            : `rgba(153, 204, 255, ${this.opacity})`; // Cool blue for dark night
+
+                        ctx.shadowBlur = 20;
+                        ctx.shadowColor = sparkleColor;
+                        ctx.fillStyle = sparkleColor;
                         ctx.fill();
                         ctx.shadowBlur = 0;
                         ctx.shadowColor = 'transparent';
                     }
                 }
+                
                 function createParticles() {
-                    if (particles.length < 300) {
+                    if (particles.length < 600) {
                         particles.push(new Particle());
                     }
                 }
+
                 function animate(timestamp) {
                     ctx.clearRect(0, 0, width, height);
                     particles.forEach(particle => {
@@ -534,19 +670,50 @@
                 console.error("Sparkle effect failed:", error);
             }
 
-            // --- BACKGROUND MODAL LOGIC ---
+            // --- BACKGROUND MODAL AND THEME TOGGLE LOGIC ---
             try {
                 const openModalBtn = document.getElementById('open-bg-modal');
                 const bgModal = document.getElementById('bg-modal');
                 const closeModalBtn = document.getElementById('close-modal');
-                const applyBgBtn = document.getElementById('apply-bg');
                 const removeBgBtn = document.getElementById('remove-bg');
-                const bgUpload = document.getElementById('bg-upload');
-                const bgUrlInput = document.getElementById('bg-url');
-                const dropArea = document.getElementById('drop-area');
-                const bgPreviewContainer = document.getElementById('bg-preview-container');
-                const bgPreview = document.getElementById('bg-preview');
                 const body = document.body;
+                
+                // NEW: Theme toggle button logic
+                const themeToggleBtn = document.getElementById('theme-toggle');
+                const themeIcon = document.getElementById('theme-icon');
+
+                if (themeToggleBtn) {
+                    themeToggleBtn.addEventListener('click', () => {
+                        if (body.classList.contains('sunny-day')) {
+                            // Switch to Dark Night theme
+                            body.classList.remove('sunny-day');
+                            themeIcon.classList.remove('fa-moon');
+                            themeIcon.classList.add('fa-sun');
+                        } else {
+                            // Switch to Sunny Day theme
+                            body.classList.add('sunny-day');
+                            themeIcon.classList.remove('fa-sun');
+                            themeIcon.classList.add('fa-moon');
+                        }
+                        // Remove any custom image background to show the new gradient
+                        body.style.backgroundImage = 'none';
+                    });
+                }
+                
+                // Logic for predefined images
+                const predefinedOptionsContainer = document.getElementById('predefined-options');
+                if (predefinedOptionsContainer) {
+                    predefinedOptionsContainer.addEventListener('click', (e) => {
+                        if (e.target.tagName === 'IMG' && e.target.dataset.bgUrl) {
+                            const imageUrl = e.target.dataset.bgUrl;
+                            body.style.backgroundImage = `url('${imageUrl}')`;
+                            body.style.backgroundSize = 'cover';
+                            body.style.backgroundPosition = 'center';
+                            body.style.animation = 'none';
+                            bgModal.classList.add('hidden');
+                        }
+                    });
+                }
 
                 if (openModalBtn) {
                     openModalBtn.addEventListener('click', () => {
@@ -560,71 +727,21 @@
                     });
                 }
                 
-                if (applyBgBtn) {
-                    applyBgBtn.addEventListener('click', () => {
-                        const url = bgUrlInput.value;
-                        if (url) {
-                            body.style.backgroundImage = `url('${url}')`;
-                            body.style.backgroundSize = 'cover';
-                            body.style.backgroundPosition = 'center';
+                if (removeBgBtn) {
+                    removeBgBtn.addEventListener('click', () => {
+                        body.style.backgroundImage = 'none';
+                        if (body.classList.contains('sunny-day')) {
+                             body.style.background = 'linear-gradient(135deg, #87CEEB, #F0E68C, #FFFACD)';
+                             body.style.backgroundSize = '500% 500%';
+                             body.style.animation = 'sunny-gradient-animation 6s linear infinite';
+                        } else {
+                            body.style.background = 'linear-gradient(135deg, #0A192F, #1F2E4A, #0A192F)';
+                            body.style.backgroundSize = '500% 500%';
+                            body.style.animation = 'gradient-animation 6s linear infinite';
                         }
                         bgModal.classList.add('hidden');
                     });
                 }
-                
-                if (removeBgBtn) {
-                    removeBgBtn.addEventListener('click', () => {
-                        body.style.backgroundImage = 'none';
-                        body.style.background = 'linear-gradient(135deg, #801A1A, #C0392B, #F39C12)';
-                        body.style.backgroundSize = '500% 500%';
-                        bgModal.classList.add('hidden');
-                    });
-                }
-
-                // Drag and drop functionality
-                if (dropArea) {
-                    ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
-                        dropArea.addEventListener(eventName, preventDefaults, false);
-                    });
-                    function preventDefaults(e) {
-                        e.preventDefault();
-                        e.stopPropagation();
-                    }
-                    ['dragenter', 'dragover'].forEach(eventName => {
-                        dropArea.addEventListener(eventName, () => dropArea.classList.add('border-[#F39C12]'), false);
-                    });
-                    ['dragleave', 'drop'].forEach(eventName => {
-                        dropArea.addEventListener(eventName, () => dropArea.classList.remove('border-[#F39C12]'), false);
-                    });
-                    dropArea.addEventListener('drop', handleDrop, false);
-                    function handleDrop(e) {
-                        let dt = e.dataTransfer;
-                        let files = dt.files;
-                        handleFiles(files);
-                    }
-                }
-
-                // Handle file input
-                if (bgUpload) {
-                    bgUpload.addEventListener('change', (e) => handleFiles(e.target.files));
-                }
-                
-                function handleFiles(files) {
-                    const file = files[0];
-                    if (file && file.type.startsWith('image/')) {
-                        const reader = new FileReader();
-                        reader.onload = function(event) {
-                            bgPreview.src = event.target.result;
-                            bgPreviewContainer.classList.remove('hidden');
-                            // Apply the background immediately after previewing
-                            body.style.backgroundImage = `url('${event.target.result}')`;
-                            body.style.backgroundSize = 'cover';
-                            body.style.backgroundPosition = 'center';
-                        };
-                        reader.readAsDataURL(file);
-                    }
-                }
-
             } catch (error) {
                 console.error("Background modal logic failed:", error);
             }
