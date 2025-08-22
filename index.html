@@ -371,63 +371,11 @@
             <a href="#" class="cta-btn inline-block px-10 py-4 font-semibold text-lg rounded-full">Book a Free Consult Today</a>
         </section>
         
-        <!-- Button to open background modal, now hidden by default -->
-        <button id="open-bg-modal" class="fixed bottom-6 right-6 p-4 rounded-full glass-container text-FDEBD0 shadow-xl hover:scale-110 transition-transform hidden">
-            <!-- SVG for eye icon -->
-            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
-                <path d="M10 12a2 2 0 100-4 2 2 0 000 4z" />
-                <path fill-rule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clip-rule="evenodd" />
-            </svg>
-        </button>
-
     </div>
 
     <!-- JavaScript for interactivity and the new sparkle effect -->
-    <script type="module">
-        // Import Firebase modules for authentication and firestore
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
-
-        // Global variables provided by the canvas environment
-        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
-        const firebaseConfig = JSON.parse(typeof __firebase_config !== 'undefined' ? __firebase_config : '{}');
-        const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : '';
-        let db, auth;
-
-        // Function to initialize Firebase
-        async function initializeFirebase() {
-            try {
-                const app = initializeApp(firebaseConfig);
-                auth = getAuth(app);
-                db = getFirestore(app);
-
-                // Sign in the user using the custom auth token or anonymously as a fallback
-                if (initialAuthToken) {
-                    await signInWithCustomToken(auth, initialAuthToken);
-                } else {
-                    await signInAnonymously(auth);
-                }
-            } catch (error) {
-                console.error("Firebase initialization failed:", error);
-            }
-        }
-        
-        document.addEventListener('DOMContentLoaded', async () => {
-            // Initialize Firebase first
-            await initializeFirebase();
-            
-            // Wait for authentication state to be ready
-            onAuthStateChanged(auth, (user) => {
-                const openBgModalBtn = document.getElementById('open-bg-modal');
-                // Only show the button if a user is logged in
-                if (user) {
-                    openBgModalBtn.classList.remove('hidden');
-                } else {
-                    openBgModalBtn.classList.add('hidden');
-                }
-            });
-
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
             // --- SCROLL-TRIGGERED ANIMATIONS ---
             const animatedSections = document.querySelectorAll('.animated-section');
 
@@ -509,117 +457,6 @@
             setInterval(() => {
                 nextBtn.click();
             }, 5000); // Change slide every 5 seconds
-
-            // --- BACKGROUND CUSTOMIZATION MODAL ---
-            const bgModal = document.getElementById('bg-modal');
-            const openBgModalBtn = document.getElementById('open-bg-modal');
-            const closeModalBtn = document.getElementById('close-modal');
-            const dropArea = document.getElementById('drop-area');
-            const fileInput = document.getElementById('bg-upload');
-            const bgUrlInput = document.getElementById('bg-url');
-            const bgPreviewContainer = document.getElementById('bg-preview-container');
-            const bgPreview = document.getElementById('bg-preview');
-            const applyBgBtn = document.getElementById('apply-bg');
-            const removeBgBtn = document.getElementById('remove-bg');
-            
-            // Open modal
-            openBgModalBtn.addEventListener('click', () => {
-                // Clear inputs and preview when the modal is opened
-                bgUrlInput.value = '';
-                bgPreview.src = '';
-                bgPreviewContainer.classList.add('hidden');
-
-                bgModal.classList.remove('hidden');
-            });
-
-            // Close modal
-            closeModalBtn.addEventListener('click', () => {
-                bgModal.classList.add('hidden');
-            });
-
-            // Handle drag events
-            ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
-                dropArea.addEventListener(eventName, preventDefaults, false);
-            });
-
-            function preventDefaults(e) {
-                e.preventDefault();
-                e.stopPropagation();
-            }
-
-            // Highlight drop area on drag
-            ['dragenter', 'dragover'].forEach(eventName => {
-                dropArea.addEventListener(eventName, () => {
-                    dropArea.classList.add('bg-white/10');
-                    dropArea.classList.add('border-[#F39C12]');
-                }, false);
-            });
-
-            // Remove highlight on drag leave/drop
-            ['dragleave', 'drop'].forEach(eventName => {
-                dropArea.addEventListener(eventName, () => {
-                    dropArea.classList.remove('bg-white/10');
-                    dropArea.classList.remove('border-[#F39C12]');
-                }, false);
-            });
-
-            // Handle file drop
-            dropArea.addEventListener('drop', handleDrop, false);
-
-            function handleDrop(e) {
-                const dt = e.dataTransfer;
-                const files = dt.files;
-                handleFiles(files);
-            }
-
-            // Handle file input change
-            fileInput.addEventListener('change', (e) => {
-                handleFiles(e.target.files);
-            });
-
-            // Handle URL input change
-            bgUrlInput.addEventListener('input', (e) => {
-                if (e.target.value.length > 0) {
-                    bgPreview.src = e.target.value;
-                    bgPreviewContainer.classList.remove('hidden');
-                } else {
-                    bgPreviewContainer.classList.add('hidden');
-                    bgPreview.src = '';
-                }
-            });
-
-            function handleFiles(files) {
-                const file = files[0];
-                if (file && file.type.startsWith('image/')) {
-                    const reader = new FileReader();
-                    reader.onload = (e) => {
-                        bgPreview.src = e.target.result;
-                        bgPreviewContainer.classList.remove('hidden');
-                    };
-                    reader.readAsDataURL(file);
-                }
-            }
-
-            // Apply background
-            applyBgBtn.addEventListener('click', () => {
-                const selectedImage = bgPreview.src;
-                if (selectedImage) {
-                    document.body.style.backgroundImage = `url('${selectedImage}')`;
-                    document.body.style.animation = 'none'; // Stop gradient animation
-                    document.body.style.backgroundSize = 'cover';
-                    document.body.style.backgroundPosition = 'center';
-                    bgModal.classList.add('hidden');
-                }
-            });
-
-            // Remove background functionality
-            removeBgBtn.addEventListener('click', () => {
-                document.body.style.backgroundImage = ''; // Remove the image
-                document.body.style.animation = 'gradient-animation 8s linear infinite'; // Restart the original animation
-                document.body.style.backgroundSize = '500% 500%';
-                document.body.style.backgroundPosition = '0% 50%';
-                bgModal.classList.add('hidden');
-            });
             
             // --- SPARKLE EFFECT SCRIPT ---
             const canvas = document.getElementById('sparkle-canvas');
