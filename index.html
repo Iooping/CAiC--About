@@ -164,6 +164,11 @@
 </head>
 <body class="p-4 md:p-8 relative">
 
+    <!-- Button to open the background customization modal -->
+    <button id="open-bg-modal" class="fixed top-4 right-4 z-40 cta-btn px-4 py-2 text-sm rounded-full">
+        Customize BG
+    </button>
+    
     <!-- Canvas for the sparkling background effect -->
     <canvas id="sparkle-canvas"></canvas>
 
@@ -377,184 +382,253 @@
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             // --- SCROLL-TRIGGERED ANIMATIONS ---
-            const animatedSections = document.querySelectorAll('.animated-section');
-
-            const observerOptions = {
-                root: null,
-                rootMargin: '0px',
-                threshold: 0.1 // Trigger when 10% of the section is visible
-            };
-
-            const sectionObserver = new IntersectionObserver((entries, observer) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        entry.target.classList.add('is-visible');
-                        observer.unobserve(entry.target); // Stop observing once it's visible
-                    }
-                });
-            }, observerOptions);
-
-            animatedSections.forEach(section => {
-                sectionObserver.observe(section);
-            });
-
-            // --- ACCORDION LOGIC ---
-            const accordionItems = document.querySelectorAll('.accordion-item');
-
-            accordionItems.forEach(item => {
-                const header = item.querySelector('.accordion-header');
-                header.addEventListener('click', () => {
-                    const content = item.querySelector('.accordion-content');
-                    const icon = header.querySelector('svg');
-
-                    // Close other open accordions
-                    accordionItems.forEach(otherItem => {
-                        if (otherItem !== item && otherItem.classList.contains('open')) {
-                            otherItem.classList.remove('open');
-                            otherItem.querySelector('.accordion-content').style.maxHeight = '0';
-                            otherItem.querySelector('svg').style.transform = 'rotate(0deg)';
+            try {
+                const animatedSections = document.querySelectorAll('.animated-section');
+                const observerOptions = {
+                    root: null,
+                    rootMargin: '0px',
+                    threshold: 0.1 // Trigger when 10% of the section is visible
+                };
+                const sectionObserver = new IntersectionObserver((entries, observer) => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            entry.target.classList.add('is-visible');
+                            observer.unobserve(entry.target);
                         }
                     });
-
-                    // Toggle current accordion
-                    if (item.classList.contains('open')) {
-                        item.classList.remove('open');
-                        content.style.maxHeight = '0';
-                        icon.style.transform = 'rotate(0deg)';
-                    } else {
-                        item.classList.add('open');
-                        content.style.maxHeight = content.scrollHeight + 'px'; // Set height to fit content
-                        icon.style.transform = 'rotate(45deg)';
-                    }
+                }, observerOptions);
+                animatedSections.forEach(section => {
+                    sectionObserver.observe(section);
                 });
-            });
+            } catch (error) {
+                console.error("Scroll animation failed:", error);
+            }
+
+            // --- ACCORDION LOGIC ---
+            try {
+                const accordionItems = document.querySelectorAll('.accordion-item');
+                accordionItems.forEach(item => {
+                    const header = item.querySelector('.accordion-header');
+                    header.addEventListener('click', () => {
+                        const content = item.querySelector('.accordion-content');
+                        const icon = header.querySelector('svg');
+                        accordionItems.forEach(otherItem => {
+                            if (otherItem !== item && otherItem.classList.contains('open')) {
+                                otherItem.classList.remove('open');
+                                otherItem.querySelector('.accordion-content').style.maxHeight = '0';
+                                otherItem.querySelector('svg').style.transform = 'rotate(0deg)';
+                            }
+                        });
+                        if (item.classList.contains('open')) {
+                            item.classList.remove('open');
+                            content.style.maxHeight = '0';
+                            icon.style.transform = 'rotate(0deg)';
+                        } else {
+                            item.classList.add('open');
+                            content.style.maxHeight = content.scrollHeight + 'px';
+                            icon.style.transform = 'rotate(45deg)';
+                        }
+                    });
+                });
+            } catch (error) {
+                console.error("Accordion logic failed:", error);
+            }
             
             // --- TESTIMONIAL SLIDER ---
-            const testimonialTrack = document.querySelector('.testimonial-track');
-            const testimonialCards = document.querySelectorAll('.testimonial-card');
-            const prevBtn = document.querySelector('.slider-btn.prev-btn');
-            const nextBtn = document.querySelector('.slider-btn.next-btn');
-
-            let currentIndex = 0;
-            const totalCards = testimonialCards.length;
-            
-            const updateSlider = () => {
-                const offset = -currentIndex * 100;
-                testimonialTrack.style.transform = `translateX(${offset}%)`;
-            };
-
-            nextBtn.addEventListener('click', () => {
-                currentIndex = (currentIndex + 1) % totalCards;
-                updateSlider();
-            });
-
-            prevBtn.addEventListener('click', () => {
-                currentIndex = (currentIndex - 1 + totalCards) % totalCards;
-                updateSlider();
-            });
-
-            // Auto-slide functionality
-            setInterval(() => {
-                nextBtn.click();
-            }, 5000); // Change slide every 5 seconds
+            try {
+                const testimonialTrack = document.querySelector('.testimonial-track');
+                const testimonialCards = document.querySelectorAll('.testimonial-card');
+                const prevBtn = document.querySelector('.slider-btn.prev-btn');
+                const nextBtn = document.querySelector('.slider-btn.next-btn');
+                let currentIndex = 0;
+                const totalCards = testimonialCards.length;
+                const updateSlider = () => {
+                    const offset = -currentIndex * 100;
+                    testimonialTrack.style.transform = `translateX(${offset}%)`;
+                };
+                if (nextBtn) {
+                    nextBtn.addEventListener('click', () => {
+                        currentIndex = (currentIndex + 1) % totalCards;
+                        updateSlider();
+                    });
+                }
+                if (prevBtn) {
+                    prevBtn.addEventListener('click', () => {
+                        currentIndex = (currentIndex - 1 + totalCards) % totalCards;
+                        updateSlider();
+                    });
+                }
+                setInterval(() => {
+                    if (nextBtn) {
+                        nextBtn.click();
+                    }
+                }, 5000);
+            } catch (error) {
+                console.error("Testimonial slider failed:", error);
+            }
             
             // --- SPARKLE EFFECT SCRIPT ---
-            const canvas = document.getElementById('sparkle-canvas');
-            const ctx = canvas.getContext('2d');
-
-            let width, height;
-            let particles = [];
-            let lastTime = 0;
-            const spawnInterval = 100; // milliseconds
-
-            // Function to resize canvas to full screen
-            function resizeCanvas() {
-                width = canvas.width = window.innerWidth;
-                height = canvas.height = window.innerHeight;
+            try {
+                const canvas = document.getElementById('sparkle-canvas');
+                const ctx = canvas.getContext('2d');
+                let width, height;
+                let particles = [];
+                let lastTime = 0;
+                const spawnInterval = 100;
+                function resizeCanvas() {
+                    width = canvas.width = window.innerWidth;
+                    height = canvas.height = window.innerHeight;
+                }
+                resizeCanvas();
+                window.addEventListener('resize', resizeCanvas);
+                class Particle {
+                    constructor() {
+                        this.x = Math.random() * width;
+                        this.y = Math.random() * height;
+                        this.size = Math.random() * 2 + 0.5;
+                        this.speedX = (Math.random() - 0.5) * 0.1;
+                        this.speedY = (Math.random() - 0.5) * 0.1;
+                        this.opacity = Math.random() * 0.5 + 0.5;
+                        this.fadeSpeed = (Math.random() * 0.005 + 0.001) * (Math.random() > 0.5 ? 1 : -1);
+                    }
+                    update() {
+                        this.x += this.speedX;
+                        this.y += this.speedY;
+                        if (this.x > width || this.x < 0) this.speedX *= -1;
+                        if (this.y > height || this.y < 0) this.speedY *= -1;
+                        this.opacity += this.fadeSpeed;
+                        if (this.opacity > 1 || this.opacity < 0.5) {
+                            this.fadeSpeed *= -1;
+                        }
+                    }
+                    draw() {
+                        ctx.beginPath();
+                        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                        ctx.shadowBlur = 15;
+                        ctx.shadowColor = `rgba(243, 156, 18, ${this.opacity})`;
+                        ctx.fillStyle = `rgba(243, 156, 18, ${this.opacity})`;
+                        ctx.fill();
+                        ctx.shadowBlur = 0;
+                        ctx.shadowColor = 'transparent';
+                    }
+                }
+                function createParticles() {
+                    if (particles.length < 300) {
+                        particles.push(new Particle());
+                    }
+                }
+                function animate(timestamp) {
+                    ctx.clearRect(0, 0, width, height);
+                    particles.forEach(particle => {
+                        particle.update();
+                        particle.draw();
+                    });
+                    if (timestamp - lastTime > spawnInterval) {
+                        createParticles();
+                        lastTime = timestamp;
+                    }
+                    requestAnimationFrame(animate);
+                }
+                animate(0);
+            } catch (error) {
+                console.error("Sparkle effect failed:", error);
             }
 
-            // Call resize initially and on window resize
-            resizeCanvas();
-            window.addEventListener('resize', resizeCanvas);
+            // --- BACKGROUND MODAL LOGIC ---
+            try {
+                const openModalBtn = document.getElementById('open-bg-modal');
+                const bgModal = document.getElementById('bg-modal');
+                const closeModalBtn = document.getElementById('close-modal');
+                const applyBgBtn = document.getElementById('apply-bg');
+                const removeBgBtn = document.getElementById('remove-bg');
+                const bgUpload = document.getElementById('bg-upload');
+                const bgUrlInput = document.getElementById('bg-url');
+                const dropArea = document.getElementById('drop-area');
+                const bgPreviewContainer = document.getElementById('bg-preview-container');
+                const bgPreview = document.getElementById('bg-preview');
+                const body = document.body;
 
-            // Particle class to manage each individual sparkle
-            class Particle {
-                constructor() {
-                    this.x = Math.random() * width;
-                    this.y = Math.random() * height;
-                    this.size = Math.random() * 2 + 0.5;
-                    this.speedX = (Math.random() - 0.5) * 0.1;
-                    this.speedY = (Math.random() - 0.5) * 0.1;
-                    this.opacity = Math.random() * 0.5 + 0.5; // Start with a non-zero opacity
-                    this.fadeSpeed = (Math.random() * 0.005 + 0.001) * (Math.random() > 0.5 ? 1 : -1);
+                if (openModalBtn) {
+                    openModalBtn.addEventListener('click', () => {
+                        bgModal.classList.remove('hidden');
+                    });
                 }
 
-                // Update particle's position and opacity
-                update() {
-                    this.x += this.speedX;
-                    this.y += this.speedY;
+                if (closeModalBtn) {
+                    closeModalBtn.addEventListener('click', () => {
+                        bgModal.classList.add('hidden');
+                    });
+                }
+                
+                if (applyBgBtn) {
+                    applyBgBtn.addEventListener('click', () => {
+                        const url = bgUrlInput.value;
+                        if (url) {
+                            body.style.backgroundImage = `url('${url}')`;
+                            body.style.backgroundSize = 'cover';
+                            body.style.backgroundPosition = 'center';
+                        }
+                        bgModal.classList.add('hidden');
+                    });
+                }
+                
+                if (removeBgBtn) {
+                    removeBgBtn.addEventListener('click', () => {
+                        body.style.backgroundImage = 'none';
+                        body.style.background = 'linear-gradient(135deg, #801A1A, #C0392B, #F39C12)';
+                        body.style.backgroundSize = '500% 500%';
+                        bgModal.classList.add('hidden');
+                    });
+                }
 
-                    if (this.x > width || this.x < 0) this.speedX *= -1;
-                    if (this.y > height || this.y < 0) this.speedY *= -1;
-
-                    // Pulsating glow effect
-                    this.opacity += this.fadeSpeed;
-                    if (this.opacity > 1 || this.opacity < 0.5) {
-                        this.fadeSpeed *= -1;
+                // Drag and drop functionality
+                if (dropArea) {
+                    ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+                        dropArea.addEventListener(eventName, preventDefaults, false);
+                    });
+                    function preventDefaults(e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                    }
+                    ['dragenter', 'dragover'].forEach(eventName => {
+                        dropArea.addEventListener(eventName, () => dropArea.classList.add('border-[#F39C12]'), false);
+                    });
+                    ['dragleave', 'drop'].forEach(eventName => {
+                        dropArea.addEventListener(eventName, () => dropArea.classList.remove('border-[#F39C12]'), false);
+                    });
+                    dropArea.addEventListener('drop', handleDrop, false);
+                    function handleDrop(e) {
+                        let dt = e.dataTransfer;
+                        let files = dt.files;
+                        handleFiles(files);
                     }
                 }
 
-                // Draw the particle on the canvas with a glow
-                draw() {
-                    ctx.beginPath();
-                    ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-                    
-                    // Add a glow effect
-                    ctx.shadowBlur = 15;
-                    ctx.shadowColor = `rgba(243, 156, 18, ${this.opacity})`;
-                    ctx.fillStyle = `rgba(243, 156, 18, ${this.opacity})`;
-
-                    ctx.fill();
-
-                    // Reset shadow properties to avoid affecting other drawings
-                    ctx.shadowBlur = 0;
-                    ctx.shadowColor = 'transparent';
+                // Handle file input
+                if (bgUpload) {
+                    bgUpload.addEventListener('change', (e) => handleFiles(e.target.files));
                 }
-            }
-
-            // Function to create new particles
-            function createParticles() {
-                // Add new particles until a certain number is reached
-                if (particles.length < 300) {
-                    particles.push(new Particle());
-                }
-            }
-            
-            // The main animation loop
-            function animate(timestamp) {
-                // Clear the canvas on each frame to redraw
-                ctx.clearRect(0, 0, width, height);
-
-                // Update and draw each particle
-                particles.forEach(particle => {
-                    particle.update();
-                    particle.draw();
-                });
-
-                // Spawn new particles based on the interval
-                if (timestamp - lastTime > spawnInterval) {
-                    createParticles();
-                    lastTime = timestamp;
+                
+                function handleFiles(files) {
+                    const file = files[0];
+                    if (file && file.type.startsWith('image/')) {
+                        const reader = new FileReader();
+                        reader.onload = function(event) {
+                            bgPreview.src = event.target.result;
+                            bgPreviewContainer.classList.remove('hidden');
+                            // Apply the background immediately after previewing
+                            body.style.backgroundImage = `url('${event.target.result}')`;
+                            body.style.backgroundSize = 'cover';
+                            body.style.backgroundPosition = 'center';
+                        };
+                        reader.readAsDataURL(file);
+                    }
                 }
 
-                // Request the next animation frame
-                requestAnimationFrame(animate);
+            } catch (error) {
+                console.error("Background modal logic failed:", error);
             }
-
-            // Start the animation loop
-            animate(0);
         });
     </script>
-
 </body>
 </html>
